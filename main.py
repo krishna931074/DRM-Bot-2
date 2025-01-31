@@ -62,10 +62,14 @@ bot = Client("bot", api_id=Config.API_ID, api_hash=Config.API_HASH, bot_token=Co
 
 async def start_services():
     LOGGER.info("Starting Web Server & Bot...")
-    await bot.start()
-    web.run_app(app, host="0.0.0.0", port=8080)
-    await idle()
-    await bot.stop()
+      # Start the bot
+    await start_bot()
+      web.run_app(app, host="0.0.0.0", port=8080)
+    # Keep the program running
+    try:
+        while True:
+            await bot.polling()  # Run forever, or until interrupted
+    except (KeyboardInterrupt, SystemExit):
+        await stop_bot()
+    
 
-if __name__ == "__main__":
-    asyncio.run(start_services())
