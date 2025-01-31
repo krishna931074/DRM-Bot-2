@@ -56,7 +56,7 @@ async def home(request):
     return web.Response(text="Hello, Docker!")
 
 app.add_routes(routes)
-PORT = int(os.getenv("PORT", '9506'))
+PORT = int(os.getenv("PORT", '8080'))
 
 # Start Bot
 bot = Client("bot", api_id=Config.API_ID, api_hash=Config.API_HASH, bot_token=Config.BOT_TOKEN)
@@ -64,7 +64,7 @@ bot = Client("bot", api_id=Config.API_ID, api_hash=Config.API_HASH, bot_token=Co
 async def start_services():
     LOGGER.info("Starting Web Server & Bot...")
     await bot.start()
-    web.run_app(app, host="219.75.27.16", port=9506)
+    web.run_app(app, host="0.0.0.0", port=8080)
     await idle()
     await bot.stop()
 
