@@ -74,6 +74,13 @@ class Msg(object):
     CMD_MSG_2 = "<b>Uploading :- </b> `{file_name}`"
     RESTART_MSG = "✅ HI Bhai log\n✅ PATH CLEARED"
 
+await bot.start()
+        logger.info("Bot started successfully.")
+        await asyncio.Event().wait()  # Keep the bot running
+    except Exception as e:
+        logger.error(f"Error while starting the bot: {e}")
+        raise
+
 app = web.Application()
 routes = web.RouteTableDef()
 
@@ -88,6 +95,16 @@ PORT = int(os.getenv("PORT", 8080))
 
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=PORT)
+
+async def main():
+    try:
+        await asyncio.gather(
+            start_server(),  # Start web server
+            start_bot()      # Start Telegram bot
+        )
+    except Exception as e:
+        logger.error(f"Error in main: {e}")
+        
    
 if __name__ == "__main__":
     asyncio.run(main())
