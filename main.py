@@ -64,7 +64,8 @@ async def start_services():
     LOGGER.info("Starting Web Server & Bot...")
       # Start the bot
     await start_bot()
-      web.run_app(app, host="0.0.0.0", port=8080)
+    
+    await web.run_app(app, host="0.0.0.0", port=8080)
     # Keep the program running
     try:
         while True:
