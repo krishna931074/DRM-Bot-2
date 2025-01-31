@@ -89,4 +89,5 @@ PORT = int(os.getenv("PORT", 8080))
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=PORT)
    
-bot.run()
+if __name__ == "__main__":
+    asyncio.run(main())
