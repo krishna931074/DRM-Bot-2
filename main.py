@@ -22,7 +22,7 @@ class Config:
     AUTH_USERS = os.environ.get("AUTH_USERS", "7841326954").split(',')
     AUTH_USERS = [int(user) for user in AUTH_USERS]
 
-    GROUPS = os.environ.get("GROUPS", "-1002300391155").split(',')
+    GROUPS = os.environ.get("GROUPS", "1002300391155").split(',')
     GROUPS = [int(group) for group in GROUPS]
 
     LOG_CH = os.environ.get("LOG_CH", "-1002381344447")
@@ -58,15 +58,18 @@ app.add_routes(routes)
 PORT = int(os.getenv("PORT", '8080'))
 web.run_app(app, host="0.0.0.0", port=8080)
     
-# Start Bot
-bot = Client("bot", api_id=Config.API_ID, api_hash=Config.API_HASH, bot_token=Config.BOT_TOKEN)
+async def main():
+    if WEBHOOK:
+        # Start the web server
+        app_runner = web.AppRunner(await web_server())
+        await app_runner.setup()
+        site = web.TCPSite(app_runner, "0.0.0.0", PORT)
+        await site.start()
+        print(f"Web server started on port {PORT}")
 
-async def start_services():
-    LOGGER.info("Starting Web Server & Bot...")
-      # Start the bot
+    # Start the bot
     await start_bot()
-    
-    web.run_app(app, host="0.0.0.0", port=8080)
+
     # Keep the program running
     try:
         while True:
