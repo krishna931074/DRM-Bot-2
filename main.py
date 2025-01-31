@@ -19,7 +19,6 @@ class Config:
     API_HASH = os.environ.get("API_HASH", "864a97e16b4ff7dc65ff5e2d1549b4a2")
     DOWNLOAD_LOCATION = "./DOWNLOADS"
     SESSIONS = "./SESSIONS"
-    HOST_NAME = ('bb219-75-27-16.singnet.com.sg')
     AUTH_USERS = os.environ.get("AUTH_USERS", "7841326954").split(',')
     AUTH_USERS = [int(user) for user in AUTH_USERS]
 
