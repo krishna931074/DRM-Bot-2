@@ -1,88 +1,55 @@
 import os
-from pyrogram import Client as AFK, idle
-from pyrogram.enums import ChatMemberStatus, ChatMembersFilter
-from pyrogram import enums
-from pyrogram.types import ChatMember
+import logging
 import asyncio
-import logging
-import tgcrypto
+from pyrogram import Client, idle
+from pyrogram.enums import ChatMemberStatus, ChatMembersFilter
+from pyrogram.types import ChatMember
 from pyromod import listen
-import logging
-from tglogging import TelegramLogHandler
 from aiohttp import web
+from tglogging import TelegramLogHandler
 
-# Store
-class Store(object):
-    CPTOKEN = "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJpZCI6MzgzNjkyMTIsIm9yZ0lkIjoyNjA1LCJ0eXBlIjoxLCJtb2JpbGUiOiI5MTcwODI3NzQyODkiLCJuYW1lIjoiQWNlIiwiZW1haWwiOm51bGwsImlzRmlyc3RMb2dpbiI6dHJ1ZSwiZGVmYXVsdExhbmd1YWdlIjpudWxsLCJjb3VudHJ5Q29kZSI6IklOIiwiaXNJbnRlcm5hdGlvbmFsIjowLCJpYXQiOjE2NDMyODE4NzcsImV4cCI6MTY0Mzg4NjY3N30.hM33P2ai6ivdzxPPfm01LAd4JWv-vnrSxGXqvCirCSpUfhhofpeqyeHPxtstXwe0"
-    SPROUT_URL = "https://discuss.oliveboard.in/"
-    ADDA_TOKEN = ""
-    THUMB_URL = "https://telegra.ph/file/84870d6d89b893e59c5f0.jpg"
-
-# Format
-class Msg(object):
-    START_MSG = "**/pro**"
-
-    TXT_MSG = "Hey <b>{user},"\
-        "\n\n`I'm Ankit Shakya Robot. I Can Download Many Type of Links.`"\
-            "\n\nSend a TXT or HTML file :-</b>"
-
-    ERROR_MSG = "<b>DL Failed ({no_of_files}) :-</b> "\
-        "\n\n<b>Name: </b>{file_name},\n<b>Link:</b> `{file_link}`\n\n<b>Error:</b> {error}"
-
-    SHOW_MSG = "<b>Downloading :- "\
-        "\n`{file_name}`\n\nLink :- `{file_link}`</b>"
-
-    CMD_MSG_1 = "`{txt}`\n\n**Total Links in File are :-** {no_of_links}\n\n**Send any Index From `[ 1 - {no_of_links} ]` :-**"
-    CMD_MSG_2 = "<b>Uploading :- </b> `{file_name}`"
-    RESTART_MSG = "✅ HI Bhai log\n✅ PATH CLEARED"
-
-
-# Config 
+# **Configuration Class**
 class Config(object):
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
-    API_ID = int(os.environ.get("API_ID",  "23442913"))
+    API_ID = int(os.environ.get("API_ID", "23442913"))
     API_HASH = os.environ.get("API_HASH", "864a97e16b4ff7dc65ff5e2d1549b4a2")
     DOWNLOAD_LOCATION = "./DOWNLOADS"
     SESSIONS = "./SESSIONS"
 
-    AUTH_USERS = os.environ.get('AUTH_USERS', '7841326954').split(',')
-    for i in range(len(AUTH_USERS)):
-        AUTH_USERS[i] = int(AUTH_USERS[i])
+    AUTH_USERS = list(map(int, os.environ.get("AUTH_USERS", "7841326954").split(",")))
+    GROUPS = list(map(int, os.environ.get("GROUPS", "-1002300391155").split(",")))
+    LOG_CH = int(os.environ.get("LOG_CH", "-1002381344447"))
 
-    GROUPS = os.environ.get('GROUPS', '-1002300391155').split(',')
-    for i in range(len(GROUPS)):
-        GROUPS[i] = int(GROUPS[i])
-
-    LOG_CH = os.environ.get("LOG_CH", "-1002381344447")
-
-# TelegramLogHandler is a custom handler which is inherited from an existing handler. ie, StreamHandler.
+# **Logging Setup**
 logging.basicConfig(
     level=logging.INFO,
     format="[%(asctime)s - %(levelname)s] - %(name)s - %(message)s",
-    datefmt='%d-%b-%y %H:%M:%S',
+    datefmt="%d-%b-%y %H:%M:%S",
     handlers=[
         TelegramLogHandler(
-            token=Config.BOT_TOKEN, 
-            log_chat_id= Config.LOG_CH, 
-            update_interval=2, 
-            minimum_lines=1, 
-            pending_logs=200000),
-        logging.StreamHandler()
-    ]
+            token=Config.BOT_TOKEN,
+            log_chat_id=Config.LOG_CH,
+            update_interval=2,
+            minimum_lines=1,
+            pending_logs=200000,
+        ),
+        logging.StreamHandler(),
+    ],
 )
 
-import logging
+LOGGER = logging.getLogger(__name__)
+LOGGER.info("Live log streaming to Telegram.")
 
-# Setup logger
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)  # Ensure logging is configured
+# **Pyrogram Bot Instance**
+bot = Client(
+    "my_bot",
+    api_id=Config.API_ID,
+    api_hash=Config.API_HASH,
+    bot_token=Config.BOT_TOKEN,
+    plugins=dict(root="plugins"),  # If you have plugins, define them here
+)
 
-def start_bot():
-    logger.info("Bot started successfully.")  # Ensure correct indentation
-
-if __name__ == "__main__":
-    start_bot()  # Start the bot when the script runs
-
+# **Aiohttp Web Server**
 app = web.Application()
 routes = web.RouteTableDef()
 
@@ -92,6 +59,28 @@ async def home(request):
 
 app.add_routes(routes)
 
-# Get the port from environment variables (default: 8080)
-PORT = int(os.getenv("PORT", 8080))
+# **Run Both the Bot and Web Server**
+async def start_services():
+    LOGGER.info("Starting Web Server & Bot...")
 
+    # Start Web Server
+    PORT = int(os.getenv("PORT", 8080))
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", PORT)
+    await site.start()
+    
+    # Start the Bot
+    await bot.start()
+    LOGGER.info("Bot started successfully!")
+
+    # Keep Running
+    await idle()
+
+    # Cleanup on shutdown
+    await bot.stop()
+    LOGGER.info("Bot stopped!")
+
+# **Run the Main Event Loop**
+if __name__ == "__main__":
+    asyncio.run(start_services())
