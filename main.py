@@ -11,6 +11,32 @@ import logging
 from tglogging import TelegramLogHandler
 from aiohttp import web
 
+# Store
+class Store(object):
+    CPTOKEN = "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJpZCI6MzgzNjkyMTIsIm9yZ0lkIjoyNjA1LCJ0eXBlIjoxLCJtb2JpbGUiOiI5MTcwODI3NzQyODkiLCJuYW1lIjoiQWNlIiwiZW1haWwiOm51bGwsImlzRmlyc3RMb2dpbiI6dHJ1ZSwiZGVmYXVsdExhbmd1YWdlIjpudWxsLCJjb3VudHJ5Q29kZSI6IklOIiwiaXNJbnRlcm5hdGlvbmFsIjowLCJpYXQiOjE2NDMyODE4NzcsImV4cCI6MTY0Mzg4NjY3N30.hM33P2ai6ivdzxPPfm01LAd4JWv-vnrSxGXqvCirCSpUfhhofpeqyeHPxtstXwe0"
+    SPROUT_URL = "https://discuss.oliveboard.in/"
+    ADDA_TOKEN = ""
+    THUMB_URL = "https://telegra.ph/file/84870d6d89b893e59c5f0.jpg"
+
+# Format
+class Msg(object):
+    START_MSG = "**/pro**"
+
+    TXT_MSG = "Hey <b>{user},"\
+        "\n\n`I'm Ankit Shakya Robot. I Can Download Many Type of Links.`"\
+            "\n\nSend a TXT or HTML file :-</b>"
+
+    ERROR_MSG = "<b>DL Failed ({no_of_files}) :-</b> "\
+        "\n\n<b>Name: </b>{file_name},\n<b>Link:</b> `{file_link}`\n\n<b>Error:</b> {error}"
+
+    SHOW_MSG = "<b>Downloading :- "\
+        "\n`{file_name}`\n\nLink :- `{file_link}`</b>"
+
+    CMD_MSG_1 = "`{txt}`\n\n**Total Links in File are :-** {no_of_links}\n\n**Send any Index From `[ 1 - {no_of_links} ]` :-**"
+    CMD_MSG_2 = "<b>Uploading :- </b> `{file_name}`"
+    RESTART_MSG = "✅ HI Bhai log\n✅ PATH CLEARED"
+
+
 # Config 
 class Config(object):
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
@@ -49,30 +75,6 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.info("live log streaming to telegram.")
 
 
-# Store
-class Store(object):
-    CPTOKEN = "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJpZCI6MzgzNjkyMTIsIm9yZ0lkIjoyNjA1LCJ0eXBlIjoxLCJtb2JpbGUiOiI5MTcwODI3NzQyODkiLCJuYW1lIjoiQWNlIiwiZW1haWwiOm51bGwsImlzRmlyc3RMb2dpbiI6dHJ1ZSwiZGVmYXVsdExhbmd1YWdlIjpudWxsLCJjb3VudHJ5Q29kZSI6IklOIiwiaXNJbnRlcm5hdGlvbmFsIjowLCJpYXQiOjE2NDMyODE4NzcsImV4cCI6MTY0Mzg4NjY3N30.hM33P2ai6ivdzxPPfm01LAd4JWv-vnrSxGXqvCirCSpUfhhofpeqyeHPxtstXwe0"
-    SPROUT_URL = "https://discuss.oliveboard.in/"
-    ADDA_TOKEN = ""
-    THUMB_URL = "https://telegra.ph/file/84870d6d89b893e59c5f0.jpg"
-
-# Format
-class Msg(object):
-    START_MSG = "**/pro**"
-
-    TXT_MSG = "Hey <b>{user},"\
-        "\n\n`I'm Ankit Shakya Robot. I Can Download Many Type of Links.`"\
-            "\n\nSend a TXT or HTML file :-</b>"
-
-    ERROR_MSG = "<b>DL Failed ({no_of_files}) :-</b> "\
-        "\n\n<b>Name: </b>{file_name},\n<b>Link:</b> `{file_link}`\n\n<b>Error:</b> {error}"
-
-    SHOW_MSG = "<b>Downloading :- "\
-        "\n`{file_name}`\n\nLink :- `{file_link}`</b>"
-
-    CMD_MSG_1 = "`{txt}`\n\n**Total Links in File are :-** {no_of_links}\n\n**Send any Index From `[ 1 - {no_of_links} ]` :-**"
-    CMD_MSG_2 = "<b>Uploading :- </b> `{file_name}`"
-    RESTART_MSG = "✅ HI Bhai log\n✅ PATH CLEARED"
 
 await bot.start()
         logger.info("Bot started successfully.")
@@ -96,15 +98,3 @@ PORT = int(os.getenv("PORT", 8080))
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=PORT)
 
-async def main():
-    try:
-        await asyncio.gather(
-            start_server(),  # Start web server
-            start_bot()      # Start Telegram bot
-        )
-    except Exception as e:
-        logger.error(f"Error in main: {e}")
-        
-   
-if __name__ == "__main__":
-    asyncio.run(main())
