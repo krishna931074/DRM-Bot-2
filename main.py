@@ -71,17 +71,17 @@ logging.basicConfig(
     ]
 )
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.info("live log streaming to telegram.")
+import logging
 
+# Setup logger
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)  # Ensure logging is configured
 
+def start_bot():
+    logger.info("Bot started successfully.")  # Ensure correct indentation
 
-await bot.start()
-        logger.info("Bot started successfully.")
-        await asyncio.Event().wait()  # Keep the bot running
-    except Exception as e:
-        logger.error(f"Error while starting the bot: {e}")
-        raise
+if __name__ == "__main__":
+    start_bot()  # Start the bot when the script runs
 
 app = web.Application()
 routes = web.RouteTableDef()
@@ -94,7 +94,4 @@ app.add_routes(routes)
 
 # Get the port from environment variables (default: 8080)
 PORT = int(os.getenv("PORT", 8080))
-
-if __name__ == "__main__":
-    web.run_app(app, host="0.0.0.0", port=PORT)
 
