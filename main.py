@@ -19,7 +19,7 @@ class Config:
     API_HASH = os.environ.get("API_HASH", "864a97e16b4ff7dc65ff5e2d1549b4a2")
     DOWNLOAD_LOCATION = "./DOWNLOADS"
     SESSIONS = "./SESSIONS"
-
+    HOST_NAME = ('bb219-75-27-16.singnet.com.sg')
     AUTH_USERS = os.environ.get("AUTH_USERS", "7841326954").split(',')
     AUTH_USERS = [int(user) for user in AUTH_USERS]
 
@@ -56,7 +56,7 @@ async def home(request):
     return web.Response(text="Hello, Docker!")
 
 app.add_routes(routes)
-PORT = int(os.getenv("PORT", '3758'))
+PORT = int(os.getenv("PORT", '9506'))
 
 # Start Bot
 bot = Client("bot", api_id=Config.API_ID, api_hash=Config.API_HASH, bot_token=Config.BOT_TOKEN)
@@ -64,7 +64,7 @@ bot = Client("bot", api_id=Config.API_ID, api_hash=Config.API_HASH, bot_token=Co
 async def start_services():
     LOGGER.info("Starting Web Server & Bot...")
     await bot.start()
-    web.run_app(app, host="58.185.92.216", port=3758)
+    web.run_app(app, host="219.75.27.16", port=9506)
     await idle()
     await bot.stop()
 
