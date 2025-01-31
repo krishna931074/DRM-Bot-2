@@ -17,4 +17,4 @@ services:
       - key: WEBHOOK
         sync: false
       - key: PORT
-        sync: false  # Default port value, update if needed￼Enter
+        sync: 3758  # Default port value, update if needed￼Enter
