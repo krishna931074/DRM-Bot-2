@@ -1,8 +1,11 @@
 #!/bin/bash
 
-start_bot() {
-    echo "Starting bot..."
-    python3 main.py
-}
+echo "Starting the bot..."
 
-start_bot  # Correct way to call the function
+# Activate virtual environment if it exists
+if [ -d "venv" ]; then
+    source venv/bin/activate
+fi
+
+# Run the bot
+python3 main.py
