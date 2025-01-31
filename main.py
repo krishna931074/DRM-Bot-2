@@ -56,7 +56,8 @@ async def home(request):
 
 app.add_routes(routes)
 PORT = int(os.getenv("PORT", '8080'))
-
+web.run_app(app, host="0.0.0.0", port=8080)
+    
 # Start Bot
 bot = Client("bot", api_id=Config.API_ID, api_hash=Config.API_HASH, bot_token=Config.BOT_TOKEN)
 
@@ -65,7 +66,7 @@ async def start_services():
       # Start the bot
     await start_bot()
     
-    await web.run_app(app, host="0.0.0.0", port=8080)
+    web.run_app(app, host="0.0.0.0", port=8080)
     # Keep the program running
     try:
         while True:
