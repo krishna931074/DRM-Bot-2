@@ -9,7 +9,7 @@ import tgcrypto
 from pyromod import listen
 import logging
 from tglogging import TelegramLogHandler
-
+from aiohttp import web
 # Config 
 class Config(object):
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
@@ -100,6 +100,15 @@ if __name__ == "__main__":
         chat_id.append(i)
         chat_id.append(j)
     
+    
+async def main():
+    if WEBHOOK:
+        # Start the web server
+        app_runner = web.AppRunner(await web_server())
+        await app_runner.setup()
+        site = web.TCPSite(app_runner, "0.0.0.0", PORT)
+        await site.start()
+        print(f"Web server started on port {PORT}")
     
     async def main():
         await PRO.start()
