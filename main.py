@@ -112,7 +112,7 @@ async def main():
     
     async def main():
         await PRO.start()
-        # h = await PRO.get_chat_member(chat_id= int(-1002447298131), user_id=6428531614)
+        # h = await PRO.get_chat_member(chat_id= int(-1002447298131), user_id=6126688051)
         # print(h)
         bot_info = await PRO.get_me()
         LOGGER.info(f"<--- @{bot_info.username} Started --->")
